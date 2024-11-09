@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 // On load of popup
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // On load of the popup screen check in Chrome's storage if the
   // 'SAML to AWS STS Keys' function is in a activated state or not.
   // Default value is 'activated'
   chrome.storage.sync.get({
     Activated: true
-  }, function(items) {
+  }, function (items) {
     document.getElementById('chkboxactivated').checked = items.Activated;
   });
 
@@ -30,7 +30,7 @@ function chkboxChangeHandler(event) {
   if (checkbox.checked) {
     action = "addWebRequestEventListener";
   }
-  chrome.runtime.sendMessage({action: action}, function(response) {
+  chrome.runtime.sendMessage({ action: action }, function (response) {
     console.log(response.message);
   });
 }

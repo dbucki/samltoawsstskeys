@@ -17,7 +17,7 @@ div {
 #divSettings {
   width: 900px;
   border-style: solid;
-    border-radius: 10px;
+  border-radius: 10px;
   background-color: #fef6e0;
 }
 
@@ -46,8 +46,8 @@ div {
 label {
   font-weight: bold;
   font-family: "Segoe UI", Tahoma, sans-serif;
-    font-size: 100%;
-  display:inline-block;
+  font-size: 100%;
+  display: inline-block;
   margin-bottom: 5px;
 }
 

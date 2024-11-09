@@ -18,13 +18,13 @@ loadItemsFromStorage();
 chrome.storage.sync.get({
   // The default is activated
   Activated: true
-}, function(item) {
+}, function (item) {
   if (item.Activated) addOnBeforeRequestEventListener();
 });
 // Additionally on start of the background process it is checked if a new version of the plugin is installed.
 // If so, show the user the changelog
 // var thisVersion = chrome.runtime.getManifest().version;
-chrome.runtime.onInstalled.addListener(function(details) {
+chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason == "install" || details.reason == "update") {
     // Open a new tab to show changelog html page
     chrome.tabs.create({ url: "../options/changelog.html" });
@@ -76,7 +76,7 @@ async function onBeforeRequestEvent(details) {
     samlXmlDoc = decodeURIComponent(unescape(atob(details.requestBody.formData.SAMLResponse[0])));
   } else if (details.requestBody.raw) {
     let combined = new ArrayBuffer(0);
-    details.requestBody.raw.forEach(function(element) {
+    details.requestBody.raw.forEach(function (element) {
       let tmp = new Uint8Array(combined.byteLength + element.bytes.byteLength);
       tmp.set(new Uint8Array(combined), 0);
       tmp.set(new Uint8Array(element.bytes), combined.byteLength);
@@ -96,7 +96,7 @@ async function onBeforeRequestEvent(details) {
   // Convert XML to JS object
   options = {
     ignoreAttributes: false,
-    attributeNamePrefix : "__",
+    attributeNamePrefix: "__",
     removeNSPrefix: true,
     alwaysCreateTextNode: true
   };
@@ -160,14 +160,14 @@ async function onBeforeRequestEvent(details) {
     console.log('roleIndex: ' + roleIndex);
     console.log('SAMLAssertion: ' + SAMLAssertion);
   }
-  
+
   let attributes_role;
   // If there is more than 1 role in the claim and roleIndex is set (hasRoleIndex = 'true'), then 
   // roleIndex should match with one of the items in attributes_role_list (the claimed roles).
   // This is the role which will be assumed.
   if (attributes_role_list.length > 1 && hasRoleIndex) {
     if (DebugLogs) console.log('DEBUG: More than one role claimed and role chosen.');
-    for (i = 0; i < attributes_role_list.length; i++) { 
+    for (i = 0; i < attributes_role_list.length; i++) {
       // roleIndex is an AWS IAM Role ARN. 
       // We need to check which item in attributes_role_list matches with roleIndex as substring
       if (attributes_role_list[i]['#text'].indexOf(roleIndex) > -1) {
@@ -200,10 +200,10 @@ async function onBeforeRequestEvent(details) {
   try {
     keys = await assumeRoleWithSAML(attributes_role, SAMLAssertion, sessionduration);
     // Append AWS credentials keys as string to 'credentials' variable
-    credentials = addProfileToCredentials(credentials, "default", keys.access_key_id, 
+    credentials = addProfileToCredentials(credentials, "default", keys.access_key_id,
       keys.secret_access_key, keys.session_token)
   }
-  catch(err) {
+  catch (err) {
     console.log("ERROR: Error when trying to assume the IAM Role with the SAML Assertion.");
     console.log(err, err.stack);
     return;
@@ -215,8 +215,8 @@ async function onBeforeRequestEvent(details) {
     // Loop through each profile (each profile has a role ARN as value)
     let profileList = Object.keys(RoleArns);
     for (let i = 0; i < profileList.length; i++) {
-      console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[i]] + 
-      " with profile name '" + profileList[i] + "'.");
+      console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[i]] +
+        " with profile name '" + profileList[i] + "'.");
       // Call AWS STS API to get credentials using Access Key ID and Secret Access Key as authentication
       try {
         let result = await assumeRole(RoleArns[profileList[i]], profileList[i], keys.access_key_id,
@@ -225,12 +225,12 @@ async function onBeforeRequestEvent(details) {
         credentials = addProfileToCredentials(credentials, profileList[i], result.access_key_id,
           result.secret_access_key, result.session_token);
       }
-      catch(err) {
+      catch (err) {
         console.log("ERROR: Error when trying to assume additional IAM Role.");
         console.log(err, err.stack);
       }
     }
-  } 
+  }
 
   // Write credentials to file
   console.log('Generate AWS tokens file.');
@@ -252,7 +252,7 @@ async function assumeRoleWithSAML(roleClaimValue, SAMLAssertion, SessionDuration
   // Extract both regex patterns from the roleClaimValue (which is a SAMLAssertion attribute)
   RoleArn = roleClaimValue.match(reRole)[0];
   PrincipalArn = roleClaimValue.match(rePrincipal)[0];
-  
+
   if (DebugLogs) {
     console.log('RoleArn: ' + RoleArn);
     console.log('PrincipalArn: ' + PrincipalArn);
@@ -349,10 +349,10 @@ async function assumeRole(roleArn, roleSessionName, AccessKeyId, SecretAccessKey
 // Append AWS credentials profile to the existing content of a credentials file
 function addProfileToCredentials(credentials, profileName, AccessKeyId, SecretAcessKey, SessionToken) {
   credentials += "[" + profileName + "]" + LF +
-  "aws_access_key_id=" + AccessKeyId + LF +
-  "aws_secret_access_key=" + SecretAcessKey + LF +
-  "aws_session_token=" + SessionToken + LF +
-  LF;
+    "aws_access_key_id=" + AccessKeyId + LF +
+    "aws_secret_access_key=" + SecretAcessKey + LF +
+    "aws_session_token=" + SessionToken + LF +
+    LF;
   return credentials;
 }
 
@@ -367,10 +367,10 @@ function outputDocAsDownload(docContent) {
     console.log(docContent);
   }
   // Triggers download of the generated file
-  chrome.downloads.download({ 
-    url: 'data:text/plain,' + docContent, 
-    filename: FileName, 
-    conflictAction: 'overwrite', 
+  chrome.downloads.download({
+    url: 'data:text/plain,' + docContent,
+    filename: FileName,
+    conflictAction: 'overwrite',
     saveAs: false
   });
 }
@@ -404,12 +404,12 @@ chrome.runtime.onMessage.addListener(
 
 
 function keepServiceRunning() {
-    // Call this function every 20 seconds to keep service worker alive
-    if (DebugLogs) console.log('DEBUG: keepServiceRunning triggered');
-    setTimeout(keepServiceRunning, 20000);
+  // Call this function every 20 seconds to keep service worker alive
+  if (DebugLogs) console.log('DEBUG: keepServiceRunning triggered');
+  setTimeout(keepServiceRunning, 20000);
 }
-  
-  
+
+
 
 function loadItemsFromStorage() {
   //default values for the options
